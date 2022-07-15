@@ -1,12 +1,20 @@
 import css from './ImageGallery.module.css';
-import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
+import { ImageGalleryItem } from 'components';
 
-export const ImageGallery = ({ imageList }) => {
+export const ImageGallery = ({ imageList, openModal }) => {
+  const { ImageGallery } = css;
+
   return (
-    <ul className={css.ImageGallery}>
+    <ul className={ImageGallery}>
       {imageList &&
         imageList.map(image => (
-          <ImageGalleryItem key={image.id} src={image.webformatURL} />
+          <ImageGalleryItem
+            key={image.id}
+            id={image.id}
+            src={image.webformatURL}
+            alt={image.tags}
+            openModal={openModal}
+          />
         ))}
     </ul>
   );
