@@ -7,12 +7,12 @@ export const ImageGallery = ({ imageList, openModal }) => {
   return (
     <ul className={ImageGallery}>
       {imageList &&
-        imageList.map(image => (
+        imageList.map(({ id, webformatURL, tags }) => (
           <ImageGalleryItem
-            key={image.id}
-            id={image.id}
-            src={image.webformatURL}
-            alt={image.tags}
+            key={id}
+            id={id}
+            src={webformatURL}
+            alt={tags}
             openModal={openModal}
           />
         ))}

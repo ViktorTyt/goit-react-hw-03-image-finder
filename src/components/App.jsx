@@ -33,6 +33,11 @@ export class App extends Component {
 
       this.setState({ isLoading: false });
     }
+    window.scrollTo({
+      left: 0,
+      top: document.body.scrollHeight,
+      behavior: 'smooth',
+    });
   };
 
   handleSubmitForm = async data => {
@@ -67,9 +72,10 @@ export class App extends Component {
 
   render() {
     const { isLoading, imageList, largeImage, largeImageAlt } = this.state;
+    const { App } = css;
 
     return (
-      <div className={css.App}>
+      <div className={App}>
         <Searchbar onSubmit={this.handleSubmitForm} />
         {isLoading ? (
           <Loader />

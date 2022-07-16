@@ -30,16 +30,25 @@ export class Searchbar extends Component {
       searchValue: '',
     });
   };
+
   render() {
+    const {
+      SearchBar,
+      SearchForm,
+      SearchFormButton,
+      SearchFormButtonLabel,
+      SearchFormInput,
+    } = css;
+
     return (
-      <header className={css.SearchBar}>
-        <form className={css.SearchForm} onSubmit={this.handleFormSubmit}>
-          <button type="submit" className={css.SearchFormButton}>
-            <span className={css.SearchFormButtonLabel}>Search</span>
+      <header className={SearchBar}>
+        <form className={SearchForm} onSubmit={this.handleFormSubmit}>
+          <button type="submit" className={SearchFormButton}>
+            <span className={SearchFormButtonLabel}>Search</span>
           </button>
 
           <input
-            className={css.SearchFormInput}
+            className={SearchFormInput}
             type="text"
             name="search"
             value={this.state.searchValue}

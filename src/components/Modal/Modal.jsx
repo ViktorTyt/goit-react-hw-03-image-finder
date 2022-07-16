@@ -1,4 +1,3 @@
-// import { render } from '@testing-library/react';
 import { Component } from 'react';
 import css from './Modal.module.css';
 
@@ -12,7 +11,6 @@ export class Modal extends Component {
   }
 
   handleKeyDown = e => {
-    console.log('Escape');
     if (e.code === 'Escape') {
       this.props.onClose();
     }
@@ -25,15 +23,15 @@ export class Modal extends Component {
   };
 
   render() {
+    const { Overlay, Modal } = css;
     const { largeImage, largeImageAlt } = this.props;
 
     return (
-      <div className={css.Overlay} onClick={this.handleBackDrop}>
-        <div className={css.Modal}>
+      <div className={Overlay} onClick={this.handleBackDrop}>
+        <div className={Modal}>
           <img src={largeImage} alt={largeImageAlt} />
         </div>
       </div>
     );
   }
 }
-// { largeImage, onClose }

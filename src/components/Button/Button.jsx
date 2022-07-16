@@ -1,11 +1,13 @@
 import css from './Button.module.css';
 
 export const Button = ({ loadMore }) => {
-  const { Button } = css;
+  const { Button, ButtonBox } = css;
 
   return (
-    <button className={Button} type="button" onClick={loadMore}>
-      load more
-    </button>
+    <div className={ButtonBox}>
+      <button className={Button} type="button" onClick={loadMore}>
+        load more
+      </button>
+    </div>
   );
 };
