@@ -6,45 +6,49 @@ import * as API from '../services/api';
 
 export class App extends Component {
   state = {
-    imageName: '',
-    imageList: [],
+    query: '',
     page: 1,
+    perPage: 12,
+    imageList: [],
     largeImage: '',
     largeImageAlt: '',
     isLoading: false,
+    isLoadMore: false,
+    error: null,
   };
 
-  componentDidUpdate = async (_, prevState) => {
-    const { page, imageName, imageList } = this.state;
+  componentDidUpdate(_, prevState) {
+    const { page, perPage, query } = this.state;
 
-    if (prevState.page !== page || prevState.imageName !== imageName) {
-      this.setState({ isLoading: true });
+    if (prevState.page !== page || prevState.query !== query) {
+      this.getImages(query, page, perPage);
+    }
+  }
 
-      try {
-        const response = await API.getImages(imageName, page);
-        const { hits } = await response;
+  getImages = async (query, page, perPage) => {
+    if (!query) return;
 
-        this.setState({
-          imageList: [...imageList, ...hits],
-        });
-      } catch (error) {
-        console.log(error.message);
-      }
+    this.setState({ isLoading: true });
 
+    try {
+      const { hits, totalHits } = await API.getImages(query, page, perPage);
+
+      const limitPage = page < Math.ceil(totalHits / perPage);
+
+      this.setState(prevState => ({
+        imageList: [...prevState.imageList, ...hits],
+        isLoadMore: limitPage,
+      }));
+    } catch (error) {
+      this.setState({ error: error.message });
+    } finally {
       this.setState({ isLoading: false });
     }
-    window.scrollTo({
-      left: 0,
-      top: document.body.scrollHeight,
-      behavior: 'smooth',
-    });
   };
 
-  handleSubmitForm = async data => {
-    const { searchValue } = data;
-
+  handleSubmitForm = searchValue => {
     this.setState({
-      imageName: searchValue,
+      query: searchValue,
       imageList: [],
       page: 1,
     });
@@ -55,11 +59,13 @@ export class App extends Component {
   };
 
   handleModalOpen = id => {
-    const largeImage = this.state.imageList.find(image => image.id === id);
+    const { largeImageURL, tags } = this.state.imageList.find(
+      image => image.id === id
+    );
 
     this.setState({
-      largeImage: largeImage.largeImageURL,
-      largeImageAlt: largeImage.tags,
+      largeImage: largeImageURL,
+      largeImageAlt: tags,
     });
   };
 
@@ -71,21 +77,27 @@ export class App extends Component {
   };
 
   render() {
-    const { isLoading, imageList, largeImage, largeImageAlt } = this.state;
-    const { App } = css;
+    const {
+      isLoading,
+      imageList,
+      largeImage,
+      largeImageAlt,
+      isLoadMore,
+      error,
+    } = this.state;
+    const { App, Message } = css;
 
     return (
       <div className={App}>
         <Searchbar onSubmit={this.handleSubmitForm} />
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <ImageGallery
-            imageList={imageList}
-            openModal={this.handleModalOpen}
-          />
+        {imageList.length === 0 && !error && !isLoading && (
+          <p className={Message}>Sorry. There are no images ... 😭</p>
         )}
-        {imageList.length > 0 && <Button loadMore={this.handleLoadMore} />}
+        {error && <p className={Message}> ❌ Something went wrong - {error}</p>}
+
+        <ImageGallery imageList={imageList} openModal={this.handleModalOpen} />
+        {isLoading && <Loader />}
+        {isLoadMore && !isLoading && <Button loadMore={this.handleLoadMore} />}
         {largeImage && (
           <Modal
             largeImage={largeImage}
